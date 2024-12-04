@@ -1,0 +1,13 @@
+#pragma once
+
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <string>
+#include <utility>
+
+namespace Ast
+{
+	constexpr char Cooperate = 'C';
+	constexpr char Defect = 'D';
+}
