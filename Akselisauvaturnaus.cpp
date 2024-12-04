@@ -5,9 +5,9 @@
 
 namespace Ast
 {
-	char Strategies::Self::Apply(const char* self, const char* opponent, size_t round) const
+	char Strategies::Self::Apply(const Player& self, const Player& opponent, size_t round) const
 	{
-		std::cout << "Opponent: " << (opponent[0] ? opponent : "-") << '\n';
+		std::cout << "Opponent: " << (opponent.History[0] ? opponent.History : "-") << '\n';
 		std::cout << "You: " << self;
 
 		std::string line;
@@ -44,8 +44,8 @@ namespace Ast
 		char& arthursChoice = Arthur.History[_round];
 		char& berthasChoice = Bertha.History[_round];
 
-		arthursChoice = Arthur.Strategy.Apply(Arthur.History, Bertha.History, _round);
-		berthasChoice = Bertha.Strategy.Apply(Bertha.History, Arthur.History, _round);
+		arthursChoice = Arthur.Strategy.Apply(Arthur, Bertha, _round);
+		berthasChoice = Bertha.Strategy.Apply(Bertha, Arthur, _round);
 
 		if (arthursChoice == Cooperate && berthasChoice == Cooperate)
 		{

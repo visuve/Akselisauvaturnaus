@@ -8,11 +8,7 @@ namespace Ast
 	constexpr char Cooperate = 'C';
 	constexpr char Defect = 'D';
 
-	struct Strategy
-	{
-		virtual char Apply(const char* self, const char* opponent, size_t round) const = 0;
-		virtual const char* Name() const = 0;
-	};
+	struct Strategy;
 
 	struct Player
 	{
@@ -36,11 +32,17 @@ namespace Ast
 		const Strategy& Strategy;
 	};
 
+	struct Strategy
+	{
+		virtual char Apply(const Player& self, const Player& opponent, size_t round) const = 0;
+		virtual const char* Name() const = 0;
+	};
+
 	namespace Strategies
 	{
 		struct Self : Strategy
 		{
-			inline char Apply(const char* h, const char*, size_t i) const override;
+			inline char Apply(const Player& h, const Player&, size_t i) const override;
 
 			inline const char* Name() const override
 			{
@@ -50,7 +52,7 @@ namespace Ast
 
 		struct Nice : Strategy
 		{
-			inline char Apply(const char*, const char*, size_t) const override
+			inline char Apply(const Player&, const Player&, size_t) const override
 			{
 				return Cooperate;
 			}
@@ -63,7 +65,7 @@ namespace Ast
 
 		struct Evil : Strategy
 		{
-			inline char Apply(const char*, const char*, size_t) const override
+			inline char Apply(const Player&, const Player&, size_t) const override
 			{
 				return Defect;
 			}
@@ -76,7 +78,7 @@ namespace Ast
 
 		struct Random : Strategy
 		{
-			inline char Apply(const char*, const char*, size_t) const override
+			inline char Apply(const Player&, const Player&, size_t) const override
 			{
 				return rand() % 2 == 0 ? Cooperate : Defect;
 			}
@@ -89,14 +91,14 @@ namespace Ast
 
 		struct Tit4Tat : Strategy
 		{
-			inline char Apply(const char*, const char* other, size_t i) const override
+			inline char Apply(const Player&, const Player& other, size_t i) const override
 			{
 				if (i == 0)
 				{
 					return Cooperate;
 				}
 
-				return other[i - 1] == Cooperate ? Cooperate : Defect;
+				return other.History[i - 1] == Cooperate ? Cooperate : Defect;
 			}
 
 			inline const char* Name() const override
