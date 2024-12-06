@@ -2,7 +2,7 @@
 
 namespace Ast
 {
-	Game::Game(size_t rounds, const Strategy& arthursStrategy, const Strategy& berthasStrategy) :
+	Game::Game(size_t rounds, Strategy& arthursStrategy, Strategy& berthasStrategy) :
 		Rounds(rounds),
 		Arthur(arthursStrategy, rounds),
 		Bertha(berthasStrategy, rounds)
@@ -19,8 +19,8 @@ namespace Ast
 		char& arthursChoice = Arthur.History[_round];
 		char& berthasChoice = Bertha.History[_round];
 
-		arthursChoice = Arthur.Strategy.Apply(Arthur, Bertha, _round);
-		berthasChoice = Bertha.Strategy.Apply(Bertha, Arthur, _round);
+		arthursChoice = Arthur.Strategy.Apply(Arthur, Bertha, _round, Rounds - _round);
+		berthasChoice = Bertha.Strategy.Apply(Bertha, Arthur, _round, Rounds - _round);
 
 		if (arthursChoice == Cooperate && berthasChoice == Cooperate)
 		{

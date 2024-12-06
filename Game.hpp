@@ -7,7 +7,7 @@ namespace Ast
 	class Game
 	{
 	public:
-		Game(size_t rounds, const Strategy&, const Strategy&);
+		Game(size_t rounds, Strategy&, Strategy&);
 
 		operator bool() const;
 		Game& operator++ ();

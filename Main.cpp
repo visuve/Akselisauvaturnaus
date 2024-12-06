@@ -4,10 +4,10 @@ int main()
 {
 	srand(0xBEB0B);
 
-	auto arthursStrategy = Ast::Strategies::Tit4Tat();
+	auto arthursStrategy = Ast::Strategies::Tideman();
 	auto berthasStrategy = Ast::Strategies::Self();
 
-	auto game = Ast::Game(5, arthursStrategy, berthasStrategy);
+	auto game = Ast::Game(100, arthursStrategy, berthasStrategy);
 
 	while (game)
 	{

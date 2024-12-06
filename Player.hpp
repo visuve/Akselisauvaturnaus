@@ -9,12 +9,12 @@ namespace Ast
 	class Player
 	{
 	public:
-		Player(const Strategy&, size_t rounds);
+		Player(Strategy&, size_t rounds);
 		virtual ~Player();
 
 		char* History = nullptr;
 		size_t Score = 0;
-		const Strategy& Strategy;
+		Strategy& Strategy;
 	};
 
 	std::ostream& operator << (std::ostream&, const Player&);

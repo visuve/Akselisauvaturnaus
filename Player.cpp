@@ -3,7 +3,7 @@
 
 namespace Ast
 {
-	Player::Player(const Ast::Strategy& strategy, size_t rounds) :
+	Player::Player(Ast::Strategy& strategy, size_t rounds) :
 		Strategy(strategy),
 		History(new char[rounds + 1])
 	{
