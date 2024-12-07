@@ -70,14 +70,14 @@ namespace Ast
 			return "Random";
 		}
 
-		char Tit4Tat::Apply(const Player&, const Player& other, size_t round, size_t)
+		char Tit4Tat::Apply(const Player&, const Player& opponent, size_t round, size_t)
 		{
 			if (round == 0)
 			{
 				return Cooperate;
 			}
 
-			return other.History[round - 1] == Cooperate ? Cooperate : Defect;
+			return opponent.History[round - 1] == Cooperate ? Cooperate : Defect;
 		}
 
 		const char* Tit4Tat::Name() const
@@ -135,7 +135,7 @@ namespace Ast
 
 		char Tideman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
-			auto deviation = [](char* samples, size_t size)->float
+			auto deviation = [](const char* samples, size_t size)->float
 			{
 				float mean = std::accumulate(samples, samples + size, 0.0f,
 					[](float accumulator, char c)
@@ -143,11 +143,10 @@ namespace Ast
 					return accumulator + (c == Cooperate);
 				}) / size;
 
-
 				float variance = std::accumulate(samples, samples + size, 0.0f,
-					[mean](float accumulator, char c)
+					[mean, size](float accumulator, char c)
 				{
-					return accumulator + std::powf((c == Cooperate) - mean, 2.0f);
+					return accumulator + std::powf((c == Cooperate) - mean, 2.0f) / float(size - 1);
 				});
 
 				return std::sqrtf(variance);
@@ -212,7 +211,103 @@ namespace Ast
 		{
 			return "Davis";
 		}
-	}
+
+		char Grofman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		{
+			if (round < 2)
+			{
+				return Cooperate;
+			}
+
+			if (round < 6)
+			{
+				return Tit4Tat::Apply(self, opponent, round, left);
+			}
+
+			if (self.History[round - 1] == opponent.History[round - 1])
+			{
+				return Cooperate;
+			}
+
+			return (rand() % 7) < 2 ? Cooperate : Defect;
+		}
+
+		const char* Grofman::Name() const
+		{
+			return nullptr;
+		}
+
+		char Nydegger::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		{
+			if (round < 3)
+			{
+				return Tit4Tat::Apply(self, opponent, round, left);
+			}
+
+			constexpr size_t nydegger[] = { 1, 6, 7, 17, 22, 23, 26, 29, 30, 31, 33, 38, 39, 45, 49, 54, 55, 58, 61 };
+
+			constexpr size_t score[2][2] = 
+			{ 
+				{ 3, 1 },
+				{ 2, 0 }
+			};
+
+			size_t a =
+				16 * score[self.History[round - 0] == Cooperate][opponent.History[round - 0] == Cooperate] +
+				04 * score[self.History[round - 1] == Cooperate][opponent.History[round - 1] == Cooperate] +
+				01 * score[self.History[round - 2] == Cooperate][opponent.History[round - 2] == Cooperate];
+
+			return std::find(std::begin(nydegger), std::end(nydegger), a) == std::end(nydegger) ? Cooperate : Defect;
+		}
+
+		const char* Nydegger::Name() const
+		{
+			return "Nydegger";
+		}
+
+		char Stein::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		{
+			if (round < 4)
+			{
+				return Cooperate;
+			}
+
+			if (left < 2)
+			{
+				return Defect;
+			}
+
+			if (round % 15 == 0)
+			{
+				auto chiSquare = [](const char* samples, size_t size)->float
+				{
+					float mean = std::accumulate(samples, samples + size, 0.0f,
+						[](float accumulator, char c)
+					{
+						return accumulator + (c == Cooperate);
+					}) / size;
+
+					float squareSum = std::accumulate(samples, samples + size, 0.0f,
+						[mean](float accumulator, char c)
+					{
+						return accumulator + std::powf((c == Cooperate) - mean, 2.0f);
+					});
+
+					return squareSum / mean;
+				};
+
+				OpponentAppearsRandom = chiSquare(opponent.History, round) >= 0.05f;
+			}
+
+
+			return OpponentAppearsRandom ? Defect : Cooperate;
+		}
+
+		const char* Stein::Name() const
+		{
+			return "Stein";
+		}
+}
 
 	std::ostream& operator << (std::ostream& os, const Strategy& strategy)
 	{

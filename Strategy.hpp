@@ -82,6 +82,25 @@ namespace Ast
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
+
+		struct Grofman : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Nydegger : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Stein : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+			bool OpponentAppearsRandom = false;
+		};
 	}
 
 	std::ostream& operator << (std::ostream&, const Strategy&);
