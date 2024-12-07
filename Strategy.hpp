@@ -101,6 +101,13 @@ namespace Ast
 			const char* Name() const override;
 			bool OpponentAppearsRandom = false;
 		};
+
+		struct Graaskamp : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+			size_t NextDefectTurn = 0;
+		};
 	}
 
 	std::ostream& operator << (std::ostream&, const Strategy&);

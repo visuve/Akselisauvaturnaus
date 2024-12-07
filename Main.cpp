@@ -2,9 +2,7 @@
 
 int main()
 {
-	srand(0xBEB0B);
-
-	auto arthursStrategy = Ast::Strategies::Tideman();
+	auto arthursStrategy = Ast::Strategies::Graaskamp();
 	auto berthasStrategy = Ast::Strategies::Self();
 
 	auto game = Ast::Game(100, arthursStrategy, berthasStrategy);

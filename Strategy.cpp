@@ -3,6 +3,58 @@
 
 namespace Ast
 {
+	float Mean(const char* samples, size_t size)
+	{
+		return std::accumulate(samples, samples + size, 0.0f,
+			[](float accumulator, char c)
+		{
+			return accumulator + (c == Cooperate);
+		}) / size;
+	}
+
+	float Deviation(const char* samples, size_t size)
+	{
+		const float mean = Mean(samples, size);
+
+		float variance = std::accumulate(samples, samples + size, 0.0f,
+			[mean, size](float accumulator, char c)
+		{
+			return accumulator + std::powf((c == Cooperate) - mean, 2.0f) / float(size - 1);
+		});
+
+		return std::sqrtf(variance);
+	};
+
+	float ChiSquare(const char* samples, size_t size)
+	{
+		const float mean = Mean(samples, size);
+
+		float squareSum = std::accumulate(samples, samples + size, 0.0f,
+			[mean](float accumulator, char c)
+		{
+			return accumulator + std::powf((c == Cooperate) - mean, 2.0f);
+		});
+
+		return squareSum / mean;
+	};
+
+	const std::seed_seq Seed({ 'A', 'x', 'e', 'l', 'r', 'o', 'd' });
+
+	template <typename T>
+	T RandomNumber(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max())
+	{
+		static thread_local std::default_random_engine engine(Seed);
+		std::uniform_int_distribution<T> distribution(min, max);
+		return distribution(engine);
+	}
+
+	char RandomChoice()
+	{
+		static thread_local std::default_random_engine engine(Seed);
+		std::bernoulli_distribution distribution(0.5);
+		return distribution(engine) ? Cooperate : Defect;
+	}
+
 	namespace Strategies
 	{
 		char Self::Apply(const Player& self, const Player& opponent, size_t, size_t)
@@ -62,7 +114,7 @@ namespace Ast
 
 		char Random::Apply(const Player&, const Player&, size_t, size_t)
 		{
-			return rand() % 2 ? Cooperate : Defect;
+			return RandomChoice();
 		}
 
 		const char* Random::Name() const
@@ -135,29 +187,12 @@ namespace Ast
 
 		char Tideman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
-			auto deviation = [](const char* samples, size_t size)->float
-			{
-				float mean = std::accumulate(samples, samples + size, 0.0f,
-					[](float accumulator, char c)
-				{
-					return accumulator + (c == Cooperate);
-				}) / size;
-
-				float variance = std::accumulate(samples, samples + size, 0.0f,
-					[mean, size](float accumulator, char c)
-				{
-					return accumulator + std::powf((c == Cooperate) - mean, 2.0f) / float(size - 1);
-				});
-
-				return std::sqrtf(variance);
-			};
-
 			if (self.Score > opponent.Score &&
 				(self.Score - opponent.Score) >= 10 &&
 				opponent.History[round] != Defect &&
 				SinceLastReset >= 20 &&
 				left >= 10 &&
-				deviation(opponent.History, round) >= 3.0f)
+				Deviation(opponent.History, round) >= 3.0f)
 			{
 				SinceLastReset = 0;
 				RetaliationCur = 0;
@@ -229,7 +264,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			return (rand() % 7) < 2 ? Cooperate : Defect;
+			return RandomNumber(0, 7) < 2 ? Cooperate : Defect;
 		}
 
 		const char* Grofman::Name() const
@@ -279,26 +314,8 @@ namespace Ast
 
 			if (round % 15 == 0)
 			{
-				auto chiSquare = [](const char* samples, size_t size)->float
-				{
-					float mean = std::accumulate(samples, samples + size, 0.0f,
-						[](float accumulator, char c)
-					{
-						return accumulator + (c == Cooperate);
-					}) / size;
-
-					float squareSum = std::accumulate(samples, samples + size, 0.0f,
-						[mean](float accumulator, char c)
-					{
-						return accumulator + std::powf((c == Cooperate) - mean, 2.0f);
-					});
-
-					return squareSum / mean;
-				};
-
-				OpponentAppearsRandom = chiSquare(opponent.History, round) >= 0.05f;
+				OpponentAppearsRandom = ChiSquare(opponent.History, round) >= 0.05f;
 			}
-
 
 			return OpponentAppearsRandom ? Defect : Cooperate;
 		}
@@ -306,6 +323,42 @@ namespace Ast
 		const char* Stein::Name() const
 		{
 			return "Stein";
+		}
+
+		char Graaskamp::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		{
+			if (round < 50)
+			{
+				return Tit4Tat::Apply(self, opponent, round, left);
+			}
+			
+			if (round == 50)
+			{
+				return Defect;
+			}
+			
+			if (round < 56)
+			{
+				return Tit4Tat::Apply(self, opponent, round, left);
+			}
+
+			if (round == 56 && ChiSquare(opponent.History, round) >= 0.05f)
+			{
+				NextDefectTurn = round + RandomNumber<size_t>(5u, 15u);
+			}
+
+			if (round == NextDefectTurn)
+			{
+				NextDefectTurn += RandomNumber<size_t>(5u, 15u);
+				return Defect;
+			}
+
+			return Cooperate;
+		}
+
+		const char* Graaskamp::Name() const
+		{
+			return "Graaskamp";
 		}
 }
 
