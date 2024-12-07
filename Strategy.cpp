@@ -57,8 +57,9 @@ namespace Ast
 
 	namespace Strategies
 	{
-		char Self::Apply(const Player& self, const Player& opponent, size_t, size_t)
+		char Self::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
+			std::cout << "Round: " << round << ". Left: " << left << '\n';
 			std::cout << "Opponent: " << (opponent.History[0] ? opponent.History : "-") << '\n';
 			std::cout << "You: " << self.History;
 
@@ -67,6 +68,11 @@ namespace Ast
 
 			while (std::getline(std::cin, line))
 			{
+				if (line.empty())
+				{
+					continue;
+				}
+
 				c = line.front();
 
 				if (c == Cooperate || c == Defect)
