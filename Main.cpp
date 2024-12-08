@@ -1,11 +1,16 @@
 #include "Competition.hpp"
 
+constexpr size_t Rounds = 200;
+
 int main()
 {
 	auto arthursStrategy = Ast::Strategies::Graaskamp();
-	auto berthasStrategy = Ast::Strategies::Self();
+	auto berthasStrategy = Ast::Strategies::Random();
 
-	auto competition = Ast::Competition(200, arthursStrategy, berthasStrategy);
+	Ast::Player arthur(arthursStrategy, Rounds);
+	Ast::Player bertha(berthasStrategy, Rounds);
+
+	auto competition = Ast::Competition(arthur, bertha, Rounds);
 
 	while (competition)
 	{

@@ -2,10 +2,10 @@
 
 namespace Ast
 {
-	Competition::Competition(size_t rounds, Strategy& arthursStrategy, Strategy& berthasStrategy) :
+	Competition::Competition(Player& arthur, Player& bertha, size_t rounds) :
 		Rounds(rounds),
-		Arthur(arthursStrategy, rounds),
-		Bertha(berthasStrategy, rounds)
+		Arthur(arthur),
+		Bertha(bertha)
 	{
 	}
 

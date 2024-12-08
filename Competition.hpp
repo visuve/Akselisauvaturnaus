@@ -7,14 +7,14 @@ namespace Ast
 	class Competition
 	{
 	public:
-		Competition(size_t rounds, Strategy&, Strategy&);
+		Competition(Player&, Player&, size_t rounds);
 
 		operator bool() const;
 		Competition& operator++ ();
 
 		const size_t Rounds = 0;
-		Player Arthur;
-		Player Bertha;
+		Player& Arthur;
+		Player& Bertha;
 
 		friend std::ostream& operator << (std::ostream&, const Competition&);
 
