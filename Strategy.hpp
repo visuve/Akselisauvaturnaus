@@ -18,18 +18,6 @@ namespace Ast
 			const char* Name() const override;
 		};
 
-		struct Nice : Strategy
-		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
-			const char* Name() const override;
-		};
-
-		struct Evil : Strategy
-		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
-			const char* Name() const override;
-		};
-
 		struct Random : Strategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
@@ -37,18 +25,6 @@ namespace Ast
 		};
 
 		struct Tit4Tat : Strategy
-		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
-			const char* Name() const override;
-		};
-
-		struct Alternator : Strategy
-		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
-			const char* Name() const override;
-		};
-
-		struct Grumpy : Strategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -95,7 +71,7 @@ namespace Ast
 			const char* Name() const override;
 		};
 
-		struct Stein : Tit4Tat
+		struct SteinRapoport : Tit4Tat
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -107,6 +83,69 @@ namespace Ast
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 			size_t NextDefectTurn = 0;
+		};
+
+		struct Downing : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Downing2nd : Downing
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Feld : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+			float CooperationProbability = 1.0f;
+		};
+
+		struct Joss : Tit4Tat
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Tullock : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Unnamed : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		// Extras
+
+		struct Nice : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Evil : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Alternator : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
+		};
+
+		struct Grumpy : Strategy
+		{
+			char Apply(const Player&, const Player&, size_t, size_t) override;
+			const char* Name() const override;
 		};
 	}
 

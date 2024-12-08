@@ -3,7 +3,7 @@
 
 namespace Ast
 {
-	float Mean(const char* samples, size_t size)
+	float Mean(const char samples[], size_t size)
 	{
 		return std::accumulate(samples, samples + size, 0.0f,
 			[](float accumulator, char c)
@@ -12,47 +12,62 @@ namespace Ast
 		}) / size;
 	}
 
-	float Deviation(const char* samples, size_t size)
+	float Variance(const char samples[], size_t size, float mean)
 	{
-		const float mean = Mean(samples, size);
-
-		float variance = std::accumulate(samples, samples + size, 0.0f,
+		return std::accumulate(samples, samples + size, 0.0f,
 			[mean, size](float accumulator, char c)
 		{
 			return accumulator + std::powf((c == Cooperate) - mean, 2.0f) / float(size - 1);
 		});
+	}
 
+	float Deviation(const char samples[], size_t size)
+	{
+		const float mean = Mean(samples, size);
+		const float variance = Variance(samples, size, mean);
 		return std::sqrtf(variance);
 	};
 
-	float ChiSquare(const char* samples, size_t size)
+	float SquareSum(const char samples[], size_t size, float mean)
 	{
-		const float mean = Mean(samples, size);
-
-		float squareSum = std::accumulate(samples, samples + size, 0.0f,
+		return std::accumulate(samples, samples + size, 0.0f,
 			[mean](float accumulator, char c)
 		{
 			return accumulator + std::powf((c == Cooperate) - mean, 2.0f);
 		});
+	}
 
+	float ChiSquare(const char samples[], size_t size)
+	{
+		const float mean = Mean(samples, size);
+		const float squareSum = SquareSum(samples, size, mean);
 		return squareSum / mean;
 	};
 
 	const std::seed_seq Seed({ 'A', 'x', 'e', 'l', 'r', 'o', 'd' });
 
 	template <typename T>
-	T RandomNumber(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max())
+	T RandomInteger(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max())
 	{
 		static thread_local std::default_random_engine engine(Seed);
 		std::uniform_int_distribution<T> distribution(min, max);
 		return distribution(engine);
 	}
 
-	char RandomChoice()
+	template <typename T>
+	T RandomFloat(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max())
 	{
 		static thread_local std::default_random_engine engine(Seed);
-		std::bernoulli_distribution distribution(0.5);
-		return distribution(engine) ? Cooperate : Defect;
+		std::uniform_real_distribution<T> distribution(min, max);
+		return distribution(engine);
+	}
+
+	template <typename T>
+	T RandomChoice(T heads, T tails, double probability = 0.5)
+	{
+		static thread_local std::default_random_engine engine(Seed);
+		std::bernoulli_distribution distribution(probability);
+		return distribution(engine) ? heads : tails;
 	}
 
 	namespace Strategies
@@ -97,30 +112,9 @@ namespace Ast
 			return "You";
 		}
 
-		char Nice::Apply(const Player&, const Player&, size_t, size_t)
-		{
-			return Cooperate;
-		}
-
-		const char* Nice::Name() const
-		{
-			return "Nice";
-		}
-
-
-		char Evil::Apply(const Player&, const Player&, size_t, size_t)
-		{
-			return Defect;
-		}
-
-		const char* Evil::Name() const
-		{
-			return "Evil";
-		}
-
 		char Random::Apply(const Player&, const Player&, size_t, size_t)
 		{
-			return RandomChoice();
+			return RandomChoice(Defect, Cooperate);
 		}
 
 		const char* Random::Name() const
@@ -141,30 +135,6 @@ namespace Ast
 		const char* Tit4Tat::Name() const
 		{
 			return "Tit4Tat";
-		}
-
-		char Alternator::Apply(const Player&, const Player&, size_t round, size_t)
-		{
-			return round % 2 ? Defect : Cooperate;
-		}
-
-		const char* Alternator::Name() const
-		{
-			return "Alternator";
-		}
-
-		char Grumpy::Apply(const Player& self, const Player& opponent, size_t round, size_t)
-		{
-			size_t grumpiness = 
-				std::count(opponent.History, opponent.History + round, Defect) -
-				std::count(opponent.History, opponent.History + round, Cooperate);
-			
-			return grumpiness < 10 ? Cooperate : Defect;
-		}
-
-		const char* Grumpy::Name() const
-		{
-			return "Grumpy";
 		}
 
 		char Shubik::Apply(const Player& self, const Player& opponent, size_t round, size_t)
@@ -270,12 +240,12 @@ namespace Ast
 				return Cooperate;
 			}
 
-			return RandomNumber(0, 7) < 2 ? Cooperate : Defect;
+			return RandomInteger(0, 7) < 2 ? Cooperate : Defect;
 		}
 
 		const char* Grofman::Name() const
 		{
-			return nullptr;
+			return "Grofman";
 		}
 
 		char Nydegger::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -306,7 +276,7 @@ namespace Ast
 			return "Nydegger";
 		}
 
-		char Stein::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char SteinRapoport::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
 			if (round < 4)
 			{
@@ -326,9 +296,9 @@ namespace Ast
 			return OpponentAppearsRandom ? Defect : Cooperate;
 		}
 
-		const char* Stein::Name() const
+		const char* SteinRapoport::Name() const
 		{
-			return "Stein";
+			return "SteinRapoport";
 		}
 
 		char Graaskamp::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -350,12 +320,12 @@ namespace Ast
 
 			if (round == 56 && ChiSquare(opponent.History, round) >= 0.05f)
 			{
-				NextDefectTurn = round + RandomNumber<size_t>(5u, 15u);
+				NextDefectTurn = round + RandomInteger<size_t>(5u, 15u);
 			}
 
 			if (round == NextDefectTurn)
 			{
-				NextDefectTurn += RandomNumber<size_t>(5u, 15u);
+				NextDefectTurn += RandomInteger<size_t>(5u, 15u);
 				return Defect;
 			}
 
@@ -366,7 +336,147 @@ namespace Ast
 		{
 			return "Graaskamp";
 		}
-}
+
+		char Downing::Apply(const Player&, const Player&, size_t, size_t)
+		{
+			// TODO
+			return 0;
+		}
+
+		const char* Downing::Name() const
+		{
+			return "Downing";
+		}
+
+		char Downing2nd::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		{
+			if (round < 2)
+			{
+				return Cooperate;
+			}
+
+			return Downing::Apply(self, opponent, round, left);
+		}
+
+		const char* Downing2nd::Name() const
+		{
+			return "Downing2nd";
+		}
+
+		char Feld::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		{
+			if (round == 0)
+			{
+				return Cooperate;
+			}
+
+			if (opponent.History[round - 1] == Defect)
+			{
+				if (CooperationProbability > 0.5)
+				{
+					CooperationProbability -= 0.05f;
+				}
+
+				return Defect;
+			}
+
+			return RandomChoice(Cooperate, Defect, CooperationProbability);
+		}
+
+		const char* Feld::Name() const
+		{
+			return "Feld";
+		}
+
+		char Joss::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		{
+			if (opponent.History[round - 1] == Defect)
+			{
+				return Defect;
+			}
+
+			return RandomChoice(Cooperate, Defect, 0.9f);
+		}
+
+		const char* Joss::Name() const
+		{
+			return "Joss";
+		}
+
+		char Tullock::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		{
+			if (round < 11)
+			{
+				return Cooperate;
+			}
+
+			float mean = Mean(opponent.History, round) - 0.1f;
+
+			return RandomChoice(Cooperate, Defect, mean);
+		}
+
+		const char* Tullock::Name() const
+		{
+			return "Tullock";
+		}
+
+		char Unnamed::Apply(const Player&, const Player&, size_t round, size_t)
+		{
+			const float random = RandomFloat(0.0f, 1.0f);
+			return random > 0.3f && random < 0.7f ? Cooperate : Defect;
+		}
+
+		const char* Unnamed::Name() const
+		{
+			return "Unnamed";
+		}
+
+		// Extras
+
+		char Nice::Apply(const Player&, const Player&, size_t, size_t)
+		{
+			return Cooperate;
+		}
+
+		const char* Nice::Name() const
+		{
+			return "Nice";
+		}
+
+		char Evil::Apply(const Player&, const Player&, size_t, size_t)
+		{
+			return Defect;
+		}
+
+		const char* Evil::Name() const
+		{
+			return "Evil";
+		}
+
+		char Alternator::Apply(const Player&, const Player&, size_t round, size_t)
+		{
+			return round % 2 ? Defect : Cooperate;
+		}
+
+		const char* Alternator::Name() const
+		{
+			return "Alternator";
+		}
+
+		char Grumpy::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		{
+			size_t grumpiness =
+				std::count(opponent.History, opponent.History + round, Defect) -
+				std::count(opponent.History, opponent.History + round, Cooperate);
+
+			return grumpiness < 10 ? Cooperate : Defect;
+		}
+
+		const char* Grumpy::Name() const
+		{
+			return "Grumpy";
+		}
+	}
 
 	std::ostream& operator << (std::ostream& os, const Strategy& strategy)
 	{
