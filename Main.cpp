@@ -1,18 +1,18 @@
-#include "Game.hpp"
+#include "Competition.hpp"
 
 int main()
 {
 	auto arthursStrategy = Ast::Strategies::Graaskamp();
 	auto berthasStrategy = Ast::Strategies::Self();
 
-	auto game = Ast::Game(100, arthursStrategy, berthasStrategy);
+	auto competition = Ast::Competition(200, arthursStrategy, berthasStrategy);
 
-	while (game)
+	while (competition)
 	{
-		++game;
+		++competition;
 	}
 
-	std::cout << game << std::endl;
+	std::cout << competition << std::endl;
 
 	return 0;
 }

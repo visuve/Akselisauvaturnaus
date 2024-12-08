@@ -1,20 +1,20 @@
-#include "Game.hpp"
+#include "Competition.hpp"
 
 namespace Ast
 {
-	Game::Game(size_t rounds, Strategy& arthursStrategy, Strategy& berthasStrategy) :
+	Competition::Competition(size_t rounds, Strategy& arthursStrategy, Strategy& berthasStrategy) :
 		Rounds(rounds),
 		Arthur(arthursStrategy, rounds),
 		Bertha(berthasStrategy, rounds)
 	{
 	}
 
-	Game::operator bool() const
+	Competition::operator bool() const
 	{
 		return _round < Rounds;
 	}
 
-	Game& Game::operator++()
+	Competition& Competition::operator++()
 	{
 		char& arthursChoice = Arthur.History[_round];
 		char& berthasChoice = Bertha.History[_round];
@@ -49,7 +49,7 @@ namespace Ast
 		return *this;
 	}
 
-	std::ostream& operator << (std::ostream& os, const Game& game)
+	std::ostream& operator << (std::ostream& os, const Competition& game)
 	{
 		return os << game.Arthur << '\n' << game.Bertha;
 	}

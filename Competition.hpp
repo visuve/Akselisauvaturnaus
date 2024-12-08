@@ -4,19 +4,19 @@
 
 namespace Ast
 {
-	class Game
+	class Competition
 	{
 	public:
-		Game(size_t rounds, Strategy&, Strategy&);
+		Competition(size_t rounds, Strategy&, Strategy&);
 
 		operator bool() const;
-		Game& operator++ ();
+		Competition& operator++ ();
 
 		const size_t Rounds = 0;
 		Player Arthur;
 		Player Bertha;
 
-		friend std::ostream& operator << (std::ostream&, const Game&);
+		friend std::ostream& operator << (std::ostream&, const Competition&);
 
 	private:
 		size_t _round = 0;
