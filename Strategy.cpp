@@ -70,6 +70,10 @@ namespace Ast
 		return distribution(engine) ? heads : tails;
 	}
 
+	void Strategy::Reset()
+	{
+	}
+
 	namespace Strategies
 	{
 		char Self::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -161,27 +165,33 @@ namespace Ast
 			return "Shubik";
 		}
 
+		void Shubik::Reset()
+		{
+			RetaliationMax = 0;
+			RetaliationCur = 0;
+		}
+
 		char Tideman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
 			if (self.Score > opponent.Score &&
 				(self.Score - opponent.Score) >= 10 &&
 				opponent.History[round] != Defect &&
-				SinceLastReset >= 20 &&
+				SinceLastForgive >= 20 &&
 				left >= 10 &&
 				Deviation(opponent.History, round) >= 3.0f)
 			{
-				SinceLastReset = 0;
+				SinceLastForgive = 0;
 				RetaliationCur = 0;
-				Reset = true;
+				Forgive = true;
 				return Cooperate;
 
 			}
 			
-			++SinceLastReset;
+			++SinceLastForgive;
 
-			if (Reset)
+			if (Forgive)
 			{
-				Reset = false;
+				Forgive = false;
 				return Cooperate;
 			}
 
@@ -191,6 +201,12 @@ namespace Ast
 		const char* Tideman::Name() const
 		{
 			return "Tideman";
+		}
+
+		void Tideman::Reset()
+		{
+			SinceLastForgive = 0;
+			Forgive = false;
 		}
 		
 		char Friedman::Apply(const Player& self, const Player& opponent, size_t round, size_t)
@@ -206,6 +222,11 @@ namespace Ast
 		const char* Friedman::Name() const
 		{
 			return "Friedman";
+		}
+
+		void Friedman::Reset()
+		{
+			Mad = false;
 		}
 
 		char Davis::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -301,6 +322,11 @@ namespace Ast
 			return "SteinRapoport";
 		}
 
+		void SteinRapoport::Reset()
+		{
+			OpponentAppearsRandom = false;
+		}
+
 		char Graaskamp::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
 			if (round < 50)
@@ -335,6 +361,11 @@ namespace Ast
 		const char* Graaskamp::Name() const
 		{
 			return "Graaskamp";
+		}
+
+		void Graaskamp::Reset()
+		{
+			NextDefectTurn = false;
 		}
 
 		char Downing::Apply(const Player&, const Player&, size_t, size_t)
@@ -386,6 +417,11 @@ namespace Ast
 		const char* Feld::Name() const
 		{
 			return "Feld";
+		}
+
+		void Feld::Reset()
+		{
+			CooperationProbability = 1.0f;
 		}
 
 		char Joss::Apply(const Player& self, const Player& opponent, size_t round, size_t)

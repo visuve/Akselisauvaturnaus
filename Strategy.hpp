@@ -8,6 +8,7 @@ namespace Ast
 	{
 		virtual char Apply(const Player& self, const Player& opponent, size_t round, size_t left) = 0;
 		virtual const char* Name() const = 0;
+		virtual void Reset();
 	};
 
 	namespace Strategies
@@ -34,6 +35,8 @@ namespace Ast
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
+			void Reset() override;
+
 			size_t RetaliationMax = 0;
 			size_t RetaliationCur = 0;
 		};
@@ -42,14 +45,18 @@ namespace Ast
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
-			size_t SinceLastReset = 0;
-			bool Reset = false;
+			void Reset() override;
+
+			size_t SinceLastForgive = 0;
+			bool Forgive = false;
 		};
 
 		struct Friedman : Strategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
+			void Reset() override;
+
 			bool Mad = false;
 		};
 
@@ -75,6 +82,8 @@ namespace Ast
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
+			void Reset() override;
+
 			bool OpponentAppearsRandom = false;
 		};
 
@@ -82,6 +91,8 @@ namespace Ast
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
+			void Reset() override;
+
 			size_t NextDefectTurn = 0;
 		};
 
@@ -101,6 +112,8 @@ namespace Ast
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
+			void Reset() override;
+
 			float CooperationProbability = 1.0f;
 		};
 
