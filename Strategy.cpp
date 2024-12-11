@@ -268,9 +268,9 @@ namespace Ast
 			};
 
 			size_t a =
-				16 * score[self.History(round - 0) == Cooperate][opponent.History(round - 0) == Cooperate] +
-				04 * score[self.History(round - 1) == Cooperate][opponent.History(round - 1) == Cooperate] +
-				01 * score[self.History(round - 2) == Cooperate][opponent.History(round - 2) == Cooperate];
+				16 * score[self.History(round - 1) == Cooperate][opponent.History(round - 1) == Cooperate] +
+				04 * score[self.History(round - 2) == Cooperate][opponent.History(round - 2) == Cooperate] +
+				01 * score[self.History(round - 3) == Cooperate][opponent.History(round - 3) == Cooperate];
 
 			return std::find(std::begin(nydegger), std::end(nydegger), a) == std::end(nydegger) ? Cooperate : Defect;
 		}
@@ -471,9 +471,11 @@ namespace Ast
 				return Cooperate;
 			}
 
-			float mean = Mean(opponent.History(), round) - 0.1f;
+			const char* lastTenMoves = opponent.History() + round - 10;
 
-			return RandomChoice(Cooperate, Defect, mean);
+			float avg = std::max(0.0f, Mean(lastTenMoves, round) - 0.1f);
+
+			return RandomChoice(Cooperate, Defect, avg);
 		}
 
 		const char* Tullock::Name() const
