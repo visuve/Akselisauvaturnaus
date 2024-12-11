@@ -20,13 +20,23 @@ namespace Ast
 		return count;
 	}
 
-	Player::Player(Ast::IStrategy& strategy, size_t rounds) :
+	Player::Player(Ast::IStrategy& strategy, size_t rounds, size_t competitions) :
 		_strategy(strategy),
-		_history(new char[++rounds])
+		_competitions(competitions),
+		_history(new char*[competitions]),
+		_score(new size_t[competitions])
 	{
-		while (rounds--)
+		
+		for (size_t y = 0; y < _competitions; ++y)
 		{
-			_history[rounds] = '\0';
+			_history[y] = new char[rounds + 1];
+
+			for (size_t x = 0; x < rounds + 1; ++x)
+			{
+				_history[y][x] = '\0';
+			}
+
+			_score[y] = 0;
 		}
 	}
 
@@ -34,18 +44,18 @@ namespace Ast
 	{
 		if (_history)
 		{
+			for (size_t y = 0; y < _competitions; ++y)
+			{
+				delete[] _history[y];
+			}
+
 			delete[] _history;
 		}
-	}
 
-	size_t Player::Cooperations() const
-	{
-		return Count(_history, Cooperate);
-	}
-
-	size_t Player::Defections() const
-	{
-		return Count(_history, Defect);
+		if (_score)
+		{
+			delete[] _score;
+		}
 	}
 
 	char Player::Play(const Player& other, size_t round, size_t left)
@@ -55,33 +65,43 @@ namespace Ast
 
 	const char* Player::History() const
 	{
-		return _history;
+		return _history[_competition];
 	}
 
 	char Player::History(size_t i) const
 	{
-		assert(_history[i]);
-		return _history[i];
+		assert(_history[_competition][i]);
+		return _history[_competition][i];
 	}
 
 	char& Player::History(size_t i)
 	{
-		return _history[i];
+		return _history[_competition][i];
+	}
+
+	size_t Player::Cooperations() const
+	{
+		return Count(_history[_competition], Cooperate);
+	}
+
+	size_t Player::Defections() const
+	{
+		return Count(_history[_competition], Defect);
 	}
 
 	size_t Player::Score() const
 	{
-		return _score;
+		return _score[_competition];
 	}
 
 	size_t& Player::Score()
 	{
-		return _score;
+		return _score[_competition];
 	}
 
 	std::ostream& operator << (std::ostream& os, const Player& player)
 	{
 		return os << player._strategy << ": " <<
-			player._history << "\t-> Score:" << player._score;
+			player.History() << "\t-> Score:" << player.Score();
 	}
 }

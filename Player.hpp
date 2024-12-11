@@ -9,17 +9,17 @@ namespace Ast
 	class Player
 	{
 	public:
-		Player(IStrategy&, size_t rounds);
+		Player(IStrategy&, size_t rounds, size_t competitions = 1);
 		virtual ~Player();
-
-		size_t Cooperations() const;
-		size_t Defections() const;
 
 		char Play(const Player& other, size_t round, size_t left);
 
 		const char* History() const;
 		char History(size_t i) const;
 		char& History(size_t i);
+
+		size_t Cooperations() const;
+		size_t Defections() const;
 
 		size_t Score() const;
 		size_t& Score();
@@ -28,8 +28,10 @@ namespace Ast
 
 	private:
 		IStrategy& _strategy;
-		char* _history = nullptr;
-		size_t _score = 0;
+		const size_t _competitions = 0;
+		size_t _competition = 0;
+		char** _history = nullptr;
+		size_t* _score = 0;
 	};
 
 	std::ostream& operator << (std::ostream&, const Player&);
