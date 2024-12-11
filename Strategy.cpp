@@ -75,8 +75,8 @@ namespace Ast
 		char Self::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
 			std::cout << "Round: " << round << ". Left: " << left << '\n';
-			std::cout << "Opponent: " << (opponent.History[0] ? opponent.History : "-") << '\n';
-			std::cout << "You: " << self.History;
+			std::cout << "Opponent: " << (opponent.History(0) ? opponent.History() : "-") << '\n';
+			std::cout << "You: " << self.History();
 
 			std::string line;
 			char c = '\0';
@@ -129,7 +129,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			return opponent.History[round - 1] == Cooperate ? Cooperate : Defect;
+			return opponent.History(round - 1) == Cooperate ? Cooperate : Defect;
 		}
 
 		const char* Tit4Tat::Name() const
@@ -146,7 +146,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			if (opponent.History[round - 1] == Defect)
+			if (opponent.History(round - 1) == Defect)
 			{
 				RetaliationCur = ++RetaliationMax;
 			}
@@ -172,12 +172,12 @@ namespace Ast
 			}
 
 
-			if (self.Score > opponent.Score &&
-				(self.Score - opponent.Score) >= 10 &&
-				opponent.History[round - 1] != Defect &&
+			if (self.Score() > opponent.Score() &&
+				(self.Score() - opponent.Score()) >= 10 &&
+				opponent.History(round - 1) != Defect &&
 				SinceLastForgive >= 20 &&
 				left >= 10 &&
-				Deviation(opponent.History, round) >= 3.0f)
+				Deviation(opponent.History(), round) >= 3.0f)
 			{
 				SinceLastForgive = 0;
 				RetaliationCur = 0;
@@ -239,7 +239,7 @@ namespace Ast
 				return Tit4Tat::Apply(self, opponent, round, left);
 			}
 
-			if (self.History[round - 1] == opponent.History[round - 1])
+			if (self.History(round - 1) == opponent.History(round - 1))
 			{
 				return Cooperate;
 			}
@@ -268,9 +268,9 @@ namespace Ast
 			};
 
 			size_t a =
-				16 * score[self.History[round - 0] == Cooperate][opponent.History[round - 0] == Cooperate] +
-				04 * score[self.History[round - 1] == Cooperate][opponent.History[round - 1] == Cooperate] +
-				01 * score[self.History[round - 2] == Cooperate][opponent.History[round - 2] == Cooperate];
+				16 * score[self.History(round - 0) == Cooperate][opponent.History(round - 0) == Cooperate] +
+				04 * score[self.History(round - 1) == Cooperate][opponent.History(round - 1) == Cooperate] +
+				01 * score[self.History(round - 2) == Cooperate][opponent.History(round - 2) == Cooperate];
 
 			return std::find(std::begin(nydegger), std::end(nydegger), a) == std::end(nydegger) ? Cooperate : Defect;
 		}
@@ -299,7 +299,7 @@ namespace Ast
 
 			if (round % 15 == 0)
 			{
-				OpponentAppearsRandom = ChiSquare(opponent.History, round) >= 0.05f;
+				OpponentAppearsRandom = ChiSquare(opponent.History(), round) >= 0.05f;
 			}
 
 			return OpponentAppearsRandom ? Defect : Cooperate;
@@ -332,7 +332,7 @@ namespace Ast
 				return Tit4Tat::Apply(self, opponent, round, left);
 			}
 
-			if (round == 56 && ChiSquare(opponent.History, round) >= 0.05f)
+			if (round == 56 && ChiSquare(opponent.History(), round) >= 0.05f)
 			{
 				NextDefectTurn = round + RandomInteger<size_t>(5u, 15u);
 			}
@@ -363,9 +363,9 @@ namespace Ast
 			}
 
 
-			if (self.History[round - 1] == Defect)
+			if (self.History(round - 1) == Defect)
 			{
-				if (opponent.History[round - 1] == Cooperate)
+				if (opponent.History(round - 1) == Cooperate)
 				{
 					++DefectResponses;
 				}
@@ -374,7 +374,7 @@ namespace Ast
 			}
 			else
 			{
-				if (opponent.History[round - 1] == Cooperate)
+				if (opponent.History(round - 1) == Cooperate)
 				{
 					++CooperateResponses;
 				}
@@ -392,7 +392,7 @@ namespace Ast
 
 			if (alpha >= 0.0f && alpha < bravo)
 			{
-				self.History[round - 1] == Cooperate ? Defect : Cooperate; 
+				self.History(round - 1) == Cooperate ? Defect : Cooperate; 
 			}
 			
 			return Defect;
@@ -422,7 +422,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			if (opponent.History[round - 1] == Defect)
+			if (opponent.History(round - 1) == Defect)
 			{
 				if (CooperationProbability > 0.5)
 				{
@@ -442,7 +442,7 @@ namespace Ast
 
 		char Joss::Apply(const Player& self, const Player& opponent, size_t round, size_t)
 		{
-			if (opponent.History[round - 1] == Defect)
+			if (opponent.History(round - 1) == Defect)
 			{
 				return Defect;
 			}
@@ -462,7 +462,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			float mean = Mean(opponent.History, round) - 0.1f;
+			float mean = Mean(opponent.History(), round) - 0.1f;
 
 			return RandomChoice(Cooperate, Defect, mean);
 		}
@@ -518,8 +518,8 @@ namespace Ast
 		char Grumpy::Apply(const Player& self, const Player& opponent, size_t round, size_t)
 		{
 			size_t grumpiness =
-				std::count(opponent.History, opponent.History + round, Defect) -
-				std::count(opponent.History, opponent.History + round, Cooperate);
+				std::count(opponent.History(), opponent.History() + round, Defect) -
+				std::count(opponent.History(), opponent.History() + round, Cooperate);
 
 			return grumpiness < 10 ? Cooperate : Defect;
 		}
