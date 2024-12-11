@@ -4,11 +4,8 @@ constexpr size_t Rounds = 200;
 
 int main()
 {
-	auto arthursStrategy = Ast::Strategies::Graaskamp();
-	auto berthasStrategy = Ast::Strategies::Random();
-
-	Ast::Player arthur(arthursStrategy, Rounds);
-	Ast::Player bertha(berthasStrategy, Rounds);
+	Ast::Player arthur(new Ast::Strategies::Graaskamp(), Rounds);
+	Ast::Player bertha(new Ast::Strategies::Random(), Rounds);
 
 	auto competition = Ast::Competition(arthur, bertha, Rounds);
 
