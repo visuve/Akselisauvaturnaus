@@ -530,7 +530,7 @@ namespace Ast
 		}
 	}
 
-	std::ostream& operator << (std::ostream& os, const Strategy& strategy)
+	std::ostream& operator << (std::ostream& os, const IStrategy& strategy)
 	{
 		return os << std::setw(10) << strategy.Name();
 	}

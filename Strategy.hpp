@@ -4,7 +4,7 @@ namespace Ast
 {
 	class Player;
 
-	struct Strategy
+	struct IStrategy
 	{
 		virtual char Apply(const Player& self, const Player& opponent, size_t round, size_t left) = 0;
 		virtual const char* Name() const = 0;
@@ -12,25 +12,25 @@ namespace Ast
 
 	namespace Strategies
 	{
-		struct Self : Strategy
+		struct Self : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Random : Strategy
+		struct Random : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Tit4Tat : Strategy
+		struct Tit4Tat : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Shubik : Strategy
+		struct Shubik : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -48,7 +48,7 @@ namespace Ast
 			bool Forgive = false;
 		};
 
-		struct Friedman : Strategy
+		struct Friedman : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -88,7 +88,7 @@ namespace Ast
 			size_t NextDefectTurn = 0;
 		};
 
-		struct Downing : Strategy
+		struct Downing : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -119,13 +119,13 @@ namespace Ast
 			const char* Name() const override;
 		};
 
-		struct Tullock : Strategy
+		struct Tullock : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Unnamed : Strategy
+		struct Unnamed : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
@@ -133,30 +133,30 @@ namespace Ast
 
 		// Extras
 
-		struct Nice : Strategy
+		struct Nice : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Evil : Strategy
+		struct Evil : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Alternator : Strategy
+		struct Alternator : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
-		struct Grumpy : Strategy
+		struct Grumpy : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
 			const char* Name() const override;
 		};
 	}
 
-	std::ostream& operator << (std::ostream&, const Strategy&);
+	std::ostream& operator << (std::ostream&, const IStrategy&);
 }

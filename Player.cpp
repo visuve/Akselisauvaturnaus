@@ -20,7 +20,7 @@ namespace Ast
 		return count;
 	}
 
-	Player::Player(Ast::Strategy& strategy, size_t rounds) :
+	Player::Player(Ast::IStrategy& strategy, size_t rounds) :
 		Strategy(strategy),
 		History(new char[++rounds])
 	{

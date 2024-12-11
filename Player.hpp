@@ -4,12 +4,12 @@
 
 namespace Ast
 {
-	struct Strategy;
+	struct IStrategy;
 
 	class Player
 	{
 	public:
-		Player(Strategy&, size_t rounds);
+		Player(IStrategy&, size_t rounds);
 		virtual ~Player();
 
 		size_t Cooperations() const;
@@ -17,7 +17,7 @@ namespace Ast
 
 		char* History = nullptr;
 		size_t Score = 0;
-		Strategy& Strategy;
+		IStrategy& Strategy;
 	};
 
 	std::ostream& operator << (std::ostream&, const Player&);
