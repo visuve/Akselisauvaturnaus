@@ -353,15 +353,24 @@ namespace Ast
 
 		char Downing::Apply(const Player& self, const Player& opponent, size_t round, size_t)
 		{
-			if (round < 2)
+			if (round == 0)
 			{
 				Good = 1.0f;
 				Bad = 0.0f;
-				CooperateResponses = 0;
-				DefectResponses = 0;
+				CooperateResponses = 0; //
+				DefectResponses = 0; //
 				return Defect;
 			}
 
+			if (round == 1)
+			{
+				if (opponent.History(round - 1) == Cooperate)
+				{
+					++CooperateResponses;
+				}
+				
+				return Defect;
+			}
 
 			if (self.History(round - 1) == Defect)
 			{

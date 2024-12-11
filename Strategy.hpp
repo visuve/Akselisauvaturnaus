@@ -48,6 +48,7 @@ namespace Ast
 			bool Forgive = false;
 		};
 
+		// A.k.a. Grim
 		struct Friedman : IStrategy
 		{
 			char Apply(const Player&, const Player&, size_t, size_t) override;
