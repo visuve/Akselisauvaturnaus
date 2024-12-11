@@ -3,11 +3,31 @@
 
 namespace Ast
 {
+	size_t Count(const char* where, char what)
+	{
+		size_t count = 0;
+
+		while (where && *where)
+		{
+			if (*where == what)
+			{
+				++count;
+			}
+
+			++where;
+		}
+
+		return count;
+	}
+
 	Player::Player(Ast::Strategy& strategy, size_t rounds) :
 		Strategy(strategy),
-		History(new char[rounds + 1])
+		History(new char[++rounds])
 	{
-		memset(History, 0, rounds + 1);
+		while (rounds--)
+		{
+			History[rounds] = '\0';
+		}
 	}
 
 	Player::~Player()
@@ -16,6 +36,16 @@ namespace Ast
 		{
 			delete[] History;
 		}
+	}
+
+	size_t Player::Cooperations() const
+	{
+		return Count(History, Cooperate);
+	}
+
+	size_t Player::Defections() const
+	{
+		return Count(History, Defect);
 	}
 
 	std::ostream& operator << (std::ostream& os, const Player& player)

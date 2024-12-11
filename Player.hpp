@@ -12,6 +12,9 @@ namespace Ast
 		Player(Strategy&, size_t rounds);
 		virtual ~Player();
 
+		size_t Cooperations() const;
+		size_t Defections() const;
+
 		char* History = nullptr;
 		size_t Score = 0;
 		Strategy& Strategy;
