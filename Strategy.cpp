@@ -70,10 +70,6 @@ namespace Ast
 		return distribution(engine) ? heads : tails;
 	}
 
-	void Strategy::Reset()
-	{
-	}
-
 	namespace Strategies
 	{
 		char Self::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -145,6 +141,8 @@ namespace Ast
 		{
 			if (round == 0)
 			{
+				RetaliationMax = 0;
+				RetaliationCur = 0;
 				return Cooperate;
 			}
 
@@ -165,17 +163,18 @@ namespace Ast
 			return "Shubik";
 		}
 
-		void Shubik::Reset()
-		{
-			RetaliationMax = 0;
-			RetaliationCur = 0;
-		}
-
 		char Tideman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
+			if (round == 0)
+			{
+				SinceLastForgive = 0;
+				Forgive = false;
+			}
+
+
 			if (self.Score > opponent.Score &&
 				(self.Score - opponent.Score) >= 10 &&
-				opponent.History[round] != Defect &&
+				opponent.History[round - 1] != Defect &&
 				SinceLastForgive >= 20 &&
 				left >= 10 &&
 				Deviation(opponent.History, round) >= 3.0f)
@@ -202,31 +201,15 @@ namespace Ast
 		{
 			return "Tideman";
 		}
-
-		void Tideman::Reset()
-		{
-			SinceLastForgive = 0;
-			Forgive = false;
-		}
 		
 		char Friedman::Apply(const Player& self, const Player& opponent, size_t round, size_t)
-		{		
-			if (opponent.History[round] == Defect)
-			{
-				Mad = true;
-			}
-
-			return Mad ? Defect : Cooperate;
+		{
+			return opponent.Defections() ? Defect : Cooperate;
 		}
 
 		const char* Friedman::Name() const
 		{
 			return "Friedman";
-		}
-
-		void Friedman::Reset()
-		{
-			Mad = false;
 		}
 
 		char Davis::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
@@ -299,6 +282,11 @@ namespace Ast
 
 		char SteinRapoport::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
+			if (round == 0)
+			{
+				OpponentAppearsRandom = false;
+			}
+
 			if (round < 4)
 			{
 				return Cooperate;
@@ -322,13 +310,13 @@ namespace Ast
 			return "SteinRapoport";
 		}
 
-		void SteinRapoport::Reset()
-		{
-			OpponentAppearsRandom = false;
-		}
-
 		char Graaskamp::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
+			if (round == 0)
+			{
+				NextDefectTurn = 0;
+			}
+
 			if (round < 50)
 			{
 				return Tit4Tat::Apply(self, opponent, round, left);
@@ -363,15 +351,51 @@ namespace Ast
 			return "Graaskamp";
 		}
 
-		void Graaskamp::Reset()
+		char Downing::Apply(const Player& self, const Player& opponent, size_t round, size_t)
 		{
-			NextDefectTurn = false;
-		}
+			if (round < 2)
+			{
+				Good = 1.0f;
+				Bad = 0.0f;
+				CooperateResponses = 0;
+				DefectResponses = 0;
+				return Defect;
+			}
 
-		char Downing::Apply(const Player&, const Player&, size_t, size_t)
-		{
-			// TODO
-			return 0;
+
+			if (self.History[round - 1] == Defect)
+			{
+				if (opponent.History[round - 1] == Cooperate)
+				{
+					++DefectResponses;
+				}
+
+				Bad = float(DefectResponses) / float(self.Defections());
+			}
+			else
+			{
+				if (opponent.History[round - 1] == Cooperate)
+				{
+					++CooperateResponses;
+				}
+				
+				Good = float(CooperateResponses) / float(self.Cooperations());
+			}
+
+			float alpha = 6.0f * Good - 8.0f * Bad - 2.0f;
+			float bravo = 4.0f * Good - 5.0f * Bad - 1.0f;
+
+			if (alpha >= 0.0f && alpha > bravo)
+			{
+				return Cooperate;
+			}
+
+			if (alpha >= 0.0f && alpha < bravo)
+			{
+				self.History[round - 1] == Cooperate ? Defect : Cooperate; 
+			}
+			
+			return Defect;
 		}
 
 		const char* Downing::Name() const
@@ -381,12 +405,8 @@ namespace Ast
 
 		char Downing2nd::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
 		{
-			if (round < 2)
-			{
-				return Cooperate;
-			}
-
-			return Downing::Apply(self, opponent, round, left);
+			char result = Downing::Apply(self, opponent, round, left);
+			return round < 2 ? Cooperate : result;
 		}
 
 		const char* Downing2nd::Name() const
@@ -398,6 +418,7 @@ namespace Ast
 		{
 			if (round == 0)
 			{
+				CooperationProbability = 1.0f;
 				return Cooperate;
 			}
 
@@ -417,11 +438,6 @@ namespace Ast
 		const char* Feld::Name() const
 		{
 			return "Feld";
-		}
-
-		void Feld::Reset()
-		{
-			CooperationProbability = 1.0f;
 		}
 
 		char Joss::Apply(const Player& self, const Player& opponent, size_t round, size_t)
