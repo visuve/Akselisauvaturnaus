@@ -7,7 +7,7 @@ namespace Ast
 	class Competition
 	{
 	public:
-		Competition(Player&, Player&, size_t rounds);
+		Competition(Player*, Player*, size_t rounds);
 
 		operator bool() const;
 		Competition& operator++ ();
@@ -17,7 +17,7 @@ namespace Ast
 	private:
 		const size_t _rounds = 0;
 		size_t _round = 0;
-		Player& _arthur;
-		Player& _bertha;
+		Player* _arthur;
+		Player* _bertha;
 	};
 }

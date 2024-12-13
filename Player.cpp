@@ -64,9 +64,9 @@ namespace Ast
 		}
 	}
 
-	char Player::Play(const Player& other, size_t round, size_t left)
+	char Player::Play(const Player* other, size_t round, size_t left)
 	{
-		return _strategy->Apply(*this, other, round, left);
+		return _strategy->Apply(this, other, round, left);
 	}
 
 	Player::operator bool() const

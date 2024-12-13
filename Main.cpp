@@ -7,7 +7,7 @@ int main()
 	Ast::Player arthur(new Ast::Strategies::Graaskamp(), Rounds);
 	Ast::Player bertha(new Ast::Strategies::Random(), Rounds);
 
-	auto competition = Ast::Competition(arthur, bertha, Rounds);
+	auto competition = Ast::Competition(&arthur, &bertha, Rounds);
 
 	while (competition)
 	{

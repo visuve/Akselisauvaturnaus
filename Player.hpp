@@ -12,7 +12,7 @@ namespace Ast
 		Player(IStrategy*, size_t rounds, size_t competitions = 1);
 		virtual ~Player();
 
-		char Play(const Player& other, size_t round, size_t left);
+		char Play(const Player* other, size_t round, size_t left);
 
 		operator bool() const;
 		Player& operator++();

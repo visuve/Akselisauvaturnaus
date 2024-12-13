@@ -72,11 +72,11 @@ namespace Ast
 
 	namespace Strategies
 	{
-		char Self::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Self::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			std::cout << "Round: " << round << ". Left: " << left << '\n';
-			std::cout << "Opponent: " << (opponent.History(0) ? opponent.History() : "-") << '\n';
-			std::cout << "You: " << self.History();
+			std::cout << "Opponent: " << (opponent->History(0) ? opponent->History() : "-") << '\n';
+			std::cout << "You: " << self->History();
 
 			std::string line;
 			char c = '\0';
@@ -112,7 +112,7 @@ namespace Ast
 			return "You";
 		}
 
-		char Random::Apply(const Player&, const Player&, size_t, size_t)
+		char Random::Apply(const Player*, const Player*, size_t, size_t)
 		{
 			return RandomChoice(Defect, Cooperate);
 		}
@@ -122,14 +122,14 @@ namespace Ast
 			return "Random";
 		}
 
-		char Tit4Tat::Apply(const Player&, const Player& opponent, size_t round, size_t)
+		char Tit4Tat::Apply(const Player*, const Player* opponent, size_t round, size_t)
 		{
 			if (round == 0)
 			{
 				return Cooperate;
 			}
 
-			return opponent.History(round - 1) == Cooperate ? Cooperate : Defect;
+			return opponent->History(round - 1) == Cooperate ? Cooperate : Defect;
 		}
 
 		const char* Tit4Tat::Name() const
@@ -137,7 +137,7 @@ namespace Ast
 			return "Tit4Tat";
 		}
 
-		char Shubik::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Shubik::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			if (round == 0)
 			{
@@ -146,7 +146,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			if (opponent.History(round - 1) == Defect)
+			if (opponent->History(round - 1) == Defect)
 			{
 				RetaliationCur = ++RetaliationMax;
 			}
@@ -163,7 +163,7 @@ namespace Ast
 			return "Shubik";
 		}
 
-		char Tideman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Tideman::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round == 0)
 			{
@@ -172,12 +172,12 @@ namespace Ast
 			}
 
 
-			if (self.Score() > opponent.Score() &&
-				(self.Score() - opponent.Score()) >= 10 &&
-				opponent.History(round - 1) != Defect &&
+			if (self->Score() > opponent->Score() &&
+				(self->Score() - opponent->Score()) >= 10 &&
+				opponent->History(round - 1) != Defect &&
 				SinceLastForgive >= 20 &&
 				left >= 10 &&
-				Deviation(opponent.History(), round) >= 3.0f)
+				Deviation(opponent->History(), round) >= 3.0f)
 			{
 				SinceLastForgive = 0;
 				RetaliationCur = 0;
@@ -202,9 +202,9 @@ namespace Ast
 			return "Tideman";
 		}
 		
-		char Friedman::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Friedman::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
-			return opponent.Defections() ? Defect : Cooperate;
+			return opponent->Defections() ? Defect : Cooperate;
 		}
 
 		const char* Friedman::Name() const
@@ -212,7 +212,7 @@ namespace Ast
 			return "Friedman";
 		}
 
-		char Davis::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Davis::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round < 10)
 			{
@@ -227,7 +227,7 @@ namespace Ast
 			return "Davis";
 		}
 
-		char Grofman::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Grofman::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round < 2)
 			{
@@ -239,7 +239,7 @@ namespace Ast
 				return Tit4Tat::Apply(self, opponent, round, left);
 			}
 
-			if (self.History(round - 1) == opponent.History(round - 1))
+			if (self->History(round - 1) == opponent->History(round - 1))
 			{
 				return Cooperate;
 			}
@@ -252,7 +252,7 @@ namespace Ast
 			return "Grofman";
 		}
 
-		char Nydegger::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Nydegger::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round < 3)
 			{
@@ -268,9 +268,9 @@ namespace Ast
 			};
 
 			size_t a =
-				16 * score[self.History(round - 1) == Cooperate][opponent.History(round - 1) == Cooperate] +
-				04 * score[self.History(round - 2) == Cooperate][opponent.History(round - 2) == Cooperate] +
-				01 * score[self.History(round - 3) == Cooperate][opponent.History(round - 3) == Cooperate];
+				16 * score[self->History(round - 1) == Cooperate][opponent->History(round - 1) == Cooperate] +
+				04 * score[self->History(round - 2) == Cooperate][opponent->History(round - 2) == Cooperate] +
+				01 * score[self->History(round - 3) == Cooperate][opponent->History(round - 3) == Cooperate];
 
 			return std::find(std::begin(nydegger), std::end(nydegger), a) == std::end(nydegger) ? Cooperate : Defect;
 		}
@@ -280,7 +280,7 @@ namespace Ast
 			return "Nydegger";
 		}
 
-		char SteinRapoport::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char SteinRapoport::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round == 0)
 			{
@@ -299,7 +299,7 @@ namespace Ast
 
 			if (round % 15 == 0)
 			{
-				OpponentAppearsRandom = ChiSquare(opponent.History(), round) >= 0.05f;
+				OpponentAppearsRandom = ChiSquare(opponent->History(), round) >= 0.05f;
 			}
 
 			return OpponentAppearsRandom ? Defect : Cooperate;
@@ -310,7 +310,7 @@ namespace Ast
 			return "SteinRapoport";
 		}
 
-		char Graaskamp::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Graaskamp::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round == 0)
 			{
@@ -332,7 +332,7 @@ namespace Ast
 				return Tit4Tat::Apply(self, opponent, round, left);
 			}
 
-			if (round == 56 && ChiSquare(opponent.History(), round) >= 0.05f)
+			if (round == 56 && ChiSquare(opponent->History(), round) >= 0.05f)
 			{
 				NextDefectTurn = round + RandomInteger<size_t>(5u, 15u);
 			}
@@ -351,7 +351,7 @@ namespace Ast
 			return "Graaskamp";
 		}
 
-		char Downing::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Downing::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			if (round == 0)
 			{
@@ -364,7 +364,7 @@ namespace Ast
 
 			if (round == 1)
 			{
-				if (opponent.History(round - 1) == Cooperate)
+				if (opponent->History(round - 1) == Cooperate)
 				{
 					++CooperateResponses;
 				}
@@ -372,23 +372,23 @@ namespace Ast
 				return Defect;
 			}
 
-			if (self.History(round - 1) == Defect)
+			if (self->History(round - 1) == Defect)
 			{
-				if (opponent.History(round - 1) == Cooperate)
+				if (opponent->History(round - 1) == Cooperate)
 				{
 					++DefectResponses;
 				}
 
-				Bad = float(DefectResponses) / float(self.Defections());
+				Bad = float(DefectResponses) / float(self->Defections());
 			}
 			else
 			{
-				if (opponent.History(round - 1) == Cooperate)
+				if (opponent->History(round - 1) == Cooperate)
 				{
 					++CooperateResponses;
 				}
 				
-				Good = float(CooperateResponses) / float(self.Cooperations());
+				Good = float(CooperateResponses) / float(self->Cooperations());
 			}
 
 			float alpha = 6.0f * Good - 8.0f * Bad - 2.0f;
@@ -401,7 +401,7 @@ namespace Ast
 
 			if (alpha >= 0.0f && alpha < bravo)
 			{
-				self.History(round - 1) == Cooperate ? Defect : Cooperate; 
+				self->History(round - 1) == Cooperate ? Defect : Cooperate; 
 			}
 			
 			return Defect;
@@ -412,7 +412,7 @@ namespace Ast
 			return "Downing";
 		}
 
-		char Downing2nd::Apply(const Player& self, const Player& opponent, size_t round, size_t left)
+		char Downing2nd::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			char result = Downing::Apply(self, opponent, round, left);
 			return round < 2 ? Cooperate : result;
@@ -423,7 +423,7 @@ namespace Ast
 			return "Downing2nd";
 		}
 
-		char Feld::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Feld::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			if (round == 0)
 			{
@@ -431,7 +431,7 @@ namespace Ast
 				return Cooperate;
 			}
 
-			if (opponent.History(round - 1) == Defect)
+			if (opponent->History(round - 1) == Defect)
 			{
 				if (CooperationProbability > 0.5)
 				{
@@ -449,9 +449,9 @@ namespace Ast
 			return "Feld";
 		}
 
-		char Joss::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Joss::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
-			if (opponent.History(round - 1) == Defect)
+			if (opponent->History(round - 1) == Defect)
 			{
 				return Defect;
 			}
@@ -464,14 +464,14 @@ namespace Ast
 			return "Joss";
 		}
 
-		char Tullock::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Tullock::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			if (round < 11)
 			{
 				return Cooperate;
 			}
 
-			const char* lastTenMoves = opponent.History() + round - 10;
+			const char* lastTenMoves = opponent->History() + round - 10;
 
 			float avg = std::max(0.0f, Mean(lastTenMoves, round) - 0.1f);
 
@@ -483,7 +483,7 @@ namespace Ast
 			return "Tullock";
 		}
 
-		char Unnamed::Apply(const Player&, const Player&, size_t round, size_t)
+		char Unnamed::Apply(const Player*, const Player*, size_t round, size_t)
 		{
 			const float random = RandomFloat(0.0f, 1.0f);
 			return random > 0.3f && random < 0.7f ? Cooperate : Defect;
@@ -496,7 +496,7 @@ namespace Ast
 
 		// Extras
 
-		char Nice::Apply(const Player&, const Player&, size_t, size_t)
+		char Nice::Apply(const Player*, const Player*, size_t, size_t)
 		{
 			return Cooperate;
 		}
@@ -506,7 +506,7 @@ namespace Ast
 			return "Nice";
 		}
 
-		char Evil::Apply(const Player&, const Player&, size_t, size_t)
+		char Evil::Apply(const Player*, const Player*, size_t, size_t)
 		{
 			return Defect;
 		}
@@ -516,7 +516,7 @@ namespace Ast
 			return "Evil";
 		}
 
-		char Alternator::Apply(const Player&, const Player&, size_t round, size_t)
+		char Alternator::Apply(const Player*, const Player*, size_t round, size_t)
 		{
 			return round % 2 ? Defect : Cooperate;
 		}
@@ -526,11 +526,11 @@ namespace Ast
 			return "Alternator";
 		}
 
-		char Grumpy::Apply(const Player& self, const Player& opponent, size_t round, size_t)
+		char Grumpy::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			size_t grumpiness =
-				std::count(opponent.History(), opponent.History() + round, Defect) -
-				std::count(opponent.History(), opponent.History() + round, Cooperate);
+				std::count(opponent->History(), opponent->History() + round, Defect) -
+				std::count(opponent->History(), opponent->History() + round, Cooperate);
 
 			return grumpiness < 10 ? Cooperate : Defect;
 		}

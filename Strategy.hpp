@@ -6,7 +6,7 @@ namespace Ast
 
 	struct IStrategy
 	{
-		virtual char Apply(const Player& self, const Player& opponent, size_t round, size_t left) = 0;
+		virtual char Apply(const Player* self, const Player* opponent, size_t round, size_t left) = 0;
 		virtual const char* Name() const = 0;
 	};
 
@@ -14,25 +14,25 @@ namespace Ast
 	{
 		struct Self : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Random : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Tit4Tat : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Shubik : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			size_t RetaliationMax = 0;
@@ -41,7 +41,7 @@ namespace Ast
 
 		struct Tideman : Shubik
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			size_t SinceLastForgive = 0;
@@ -51,31 +51,31 @@ namespace Ast
 		// A.k.a. Grim
 		struct Friedman : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Davis : Friedman
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Grofman : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Nydegger : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct SteinRapoport : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			bool OpponentAppearsRandom = false;
@@ -83,7 +83,7 @@ namespace Ast
 
 		struct Graaskamp : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			size_t NextDefectTurn = 0;
@@ -91,7 +91,7 @@ namespace Ast
 
 		struct Downing : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			float Good = 1.0f;
@@ -102,13 +102,13 @@ namespace Ast
 
 		struct Downing2nd : Downing
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Feld : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 
 			float CooperationProbability = 1.0f;
@@ -116,19 +116,19 @@ namespace Ast
 
 		struct Joss : Tit4Tat
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Tullock : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Unnamed : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
@@ -136,25 +136,25 @@ namespace Ast
 
 		struct Nice : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Evil : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Alternator : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 
 		struct Grumpy : IStrategy
 		{
-			char Apply(const Player&, const Player&, size_t, size_t) override;
+			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 		};
 	}
