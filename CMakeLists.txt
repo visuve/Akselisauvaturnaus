@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.12)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -11,8 +11,5 @@ project("Akselisauvaturnaus" LANGUAGES CXX)
 file(GLOB AkselisauvaSource "*.cpp" "*.hpp")
 
 add_executable(Akselisauvaturnaus ${AkselisauvaSource})
+set_property(TARGET Akselisauvaturnaus PROPERTY CXX_STANDARD 23)
 target_precompile_headers(Akselisauvaturnaus PRIVATE "Akselisauvaturnaus.pch")
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Akselisauvaturnaus PROPERTY CXX_STANDARD 23)
-endif()
