@@ -8,6 +8,9 @@ namespace Ast
 	{
 		virtual char Apply(const Player* self, const Player* opponent, size_t round, size_t left) = 0;
 		virtual const char* Name() const = 0;
+		virtual IStrategy* Clone() const = 0;
+
+		static IStrategy* Clone(const IStrategy* strategy);
 	};
 
 	namespace Strategies
@@ -16,24 +19,28 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Random : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Tit4Tat : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Shubik : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			size_t RetaliationMax = 0;
 			size_t RetaliationCur = 0;
@@ -43,6 +50,7 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			size_t SinceLastForgive = 0;
 			bool Forgive = false;
@@ -53,30 +61,35 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Davis : Friedman
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Grofman : Tit4Tat
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Nydegger : Tit4Tat
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct SteinRapoport : Tit4Tat
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			bool OpponentAppearsRandom = false;
 		};
@@ -85,6 +98,7 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			size_t NextDefectTurn = 0;
 		};
@@ -93,6 +107,7 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			float Good = 1.0f;
 			float Bad = 0.0f;
@@ -104,12 +119,14 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Feld : Tit4Tat
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 
 			float CooperationProbability = 1.0f;
 		};
@@ -118,18 +135,21 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Tullock : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Unnamed : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		// Extras
@@ -138,24 +158,28 @@ namespace Ast
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Evil : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Alternator : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 
 		struct Grumpy : IStrategy
 		{
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
+			IStrategy* Clone() const override;
 		};
 	}
 

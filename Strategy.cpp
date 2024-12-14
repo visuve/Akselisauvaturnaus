@@ -70,6 +70,11 @@ namespace Ast
 		return distribution(engine) ? heads : tails;
 	}
 
+	IStrategy* IStrategy::Clone(const IStrategy* strategy)
+	{
+		return strategy->Clone();
+	}
+
 	namespace Strategies
 	{
 		char Self::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -112,6 +117,11 @@ namespace Ast
 			return "You";
 		}
 
+		IStrategy* Self::Clone() const
+		{
+			return nullptr;
+		}
+
 		char Random::Apply(const Player*, const Player*, size_t, size_t)
 		{
 			return RandomChoice(Defect, Cooperate);
@@ -120,6 +130,11 @@ namespace Ast
 		const char* Random::Name() const
 		{
 			return "Random";
+		}
+
+		IStrategy* Random::Clone() const
+		{
+			return new Random();
 		}
 
 		char Tit4Tat::Apply(const Player*, const Player* opponent, size_t round, size_t)
@@ -135,6 +150,11 @@ namespace Ast
 		const char* Tit4Tat::Name() const
 		{
 			return "Tit4Tat";
+		}
+
+		IStrategy* Tit4Tat::Clone() const
+		{
+			return new Tit4Tat();
 		}
 
 		char Shubik::Apply(const Player* self, const Player* opponent, size_t round, size_t)
@@ -161,6 +181,11 @@ namespace Ast
 		const char* Shubik::Name() const
 		{
 			return "Shubik";
+		}
+
+		IStrategy* Shubik::Clone() const
+		{
+			return new Shubik();
 		}
 
 		char Tideman::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -201,6 +226,11 @@ namespace Ast
 		{
 			return "Tideman";
 		}
+
+		IStrategy* Tideman::Clone() const
+		{
+			return new Tideman();
+		}
 		
 		char Friedman::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
@@ -210,6 +240,11 @@ namespace Ast
 		const char* Friedman::Name() const
 		{
 			return "Friedman";
+		}
+
+		IStrategy* Friedman::Clone() const
+		{
+			return new Friedman();
 		}
 
 		char Davis::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -225,6 +260,11 @@ namespace Ast
 		const char* Davis::Name() const
 		{
 			return "Davis";
+		}
+
+		IStrategy* Davis::Clone() const
+		{
+			return new Davis();
 		}
 
 		char Grofman::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -250,6 +290,11 @@ namespace Ast
 		const char* Grofman::Name() const
 		{
 			return "Grofman";
+		}
+
+		IStrategy* Grofman::Clone() const
+		{
+			return new Grofman();
 		}
 
 		char Nydegger::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -280,6 +325,11 @@ namespace Ast
 			return "Nydegger";
 		}
 
+		IStrategy* Nydegger::Clone() const
+		{
+			return new Nydegger();
+		}
+
 		char SteinRapoport::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			if (round == 0)
@@ -308,6 +358,11 @@ namespace Ast
 		const char* SteinRapoport::Name() const
 		{
 			return "SteinRapoport";
+		}
+
+		IStrategy* SteinRapoport::Clone() const
+		{
+			return new SteinRapoport();
 		}
 
 		char Graaskamp::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
@@ -349,6 +404,11 @@ namespace Ast
 		const char* Graaskamp::Name() const
 		{
 			return "Graaskamp";
+		}
+
+		IStrategy* Graaskamp::Clone() const
+		{
+			return new Graaskamp();
 		}
 
 		char Downing::Apply(const Player* self, const Player* opponent, size_t round, size_t)
@@ -412,6 +472,11 @@ namespace Ast
 			return "Downing";
 		}
 
+		IStrategy* Downing::Clone() const
+		{
+			return new Downing();
+		}
+
 		char Downing2nd::Apply(const Player* self, const Player* opponent, size_t round, size_t left)
 		{
 			char result = Downing::Apply(self, opponent, round, left);
@@ -421,6 +486,11 @@ namespace Ast
 		const char* Downing2nd::Name() const
 		{
 			return "Downing2nd";
+		}
+
+		IStrategy* Downing2nd::Clone() const
+		{
+			return new Downing2nd();
 		}
 
 		char Feld::Apply(const Player* self, const Player* opponent, size_t round, size_t)
@@ -449,6 +519,11 @@ namespace Ast
 			return "Feld";
 		}
 
+		IStrategy* Feld::Clone() const
+		{
+			return new Feld();
+		}
+
 		char Joss::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
 			if (opponent->History(round - 1) == Defect)
@@ -462,6 +537,11 @@ namespace Ast
 		const char* Joss::Name() const
 		{
 			return "Joss";
+		}
+
+		IStrategy* Joss::Clone() const
+		{
+			return new Joss();
 		}
 
 		char Tullock::Apply(const Player* self, const Player* opponent, size_t round, size_t)
@@ -483,6 +563,11 @@ namespace Ast
 			return "Tullock";
 		}
 
+		IStrategy* Tullock::Clone() const
+		{
+			return new Tullock();
+		}
+
 		char Unnamed::Apply(const Player*, const Player*, size_t round, size_t)
 		{
 			const float random = RandomFloat(0.0f, 1.0f);
@@ -492,6 +577,11 @@ namespace Ast
 		const char* Unnamed::Name() const
 		{
 			return "Unnamed";
+		}
+
+		IStrategy* Unnamed::Clone() const
+		{
+			return new Unnamed();
 		}
 
 		// Extras
@@ -506,6 +596,11 @@ namespace Ast
 			return "Nice";
 		}
 
+		IStrategy* Nice::Clone() const
+		{
+			return new Nice();
+		}
+
 		char Evil::Apply(const Player*, const Player*, size_t, size_t)
 		{
 			return Defect;
@@ -516,6 +611,11 @@ namespace Ast
 			return "Evil";
 		}
 
+		IStrategy* Evil::Clone() const
+		{
+			return new Evil();
+		}
+
 		char Alternator::Apply(const Player*, const Player*, size_t round, size_t)
 		{
 			return round % 2 ? Defect : Cooperate;
@@ -524,6 +624,11 @@ namespace Ast
 		const char* Alternator::Name() const
 		{
 			return "Alternator";
+		}
+
+		IStrategy* Alternator::Clone() const
+		{
+			return new Alternator();
 		}
 
 		char Grumpy::Apply(const Player* self, const Player* opponent, size_t round, size_t)
@@ -538,6 +643,11 @@ namespace Ast
 		const char* Grumpy::Name() const
 		{
 			return "Grumpy";
+		}
+
+		IStrategy* Grumpy::Clone() const
+		{
+			return new Grumpy();
 		}
 	}
 
