@@ -22,6 +22,7 @@ namespace Ast
 
 	Player::Player(Ast::IStrategy* strategy, size_t rounds, size_t competitions) :
 		_strategy(strategy),
+		_rounds(rounds),
 		_history(new char*[competitions]),
 		_score(new size_t[competitions]),
 		_competitionCount(competitions),
@@ -62,6 +63,11 @@ namespace Ast
 		{
 			delete[] _score;
 		}
+	}
+
+	Player* Player::Clone(const Player* other)
+	{
+		return new Player(IStrategy::Clone(other->_strategy), other->_rounds, other->_competitionCount);
 	}
 
 	char Player::Play(const Player* other, size_t round, size_t left)

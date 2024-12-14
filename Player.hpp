@@ -12,6 +12,8 @@ namespace Ast
 		Player(IStrategy*, size_t rounds, size_t competitions = 1);
 		virtual ~Player();
 
+		static Player* Clone(const Player* other);
+
 		char Play(const Player* other, size_t round, size_t left);
 
 		operator bool() const;
@@ -34,6 +36,7 @@ namespace Ast
 		char** _history = nullptr;
 		size_t* _score = 0;
 
+		const size_t _rounds = 0;
 		const size_t _competitionCount = 0;
 		size_t _competitionIndex = 0;
 	};
