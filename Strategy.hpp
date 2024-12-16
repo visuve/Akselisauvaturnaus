@@ -9,8 +9,6 @@ namespace Ast
 		virtual char Apply(const Player* self, const Player* opponent, size_t round, size_t left) = 0;
 		virtual const char* Name() const = 0;
 		virtual IStrategy* Clone() const = 0;
-
-		static IStrategy* Clone(const IStrategy* strategy);
 	};
 
 	namespace Strategies

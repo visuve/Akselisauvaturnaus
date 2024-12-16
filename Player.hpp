@@ -9,10 +9,9 @@ namespace Ast
 	class Player
 	{
 	public:
-		Player(IStrategy*, size_t rounds, size_t competitions = 1);
+		Player(IStrategy*, size_t rounds, size_t competitions = 1, size_t competitionIndex = 0);
 		virtual ~Player();
-
-		static Player* Clone(const Player* other);
+		Player* Clone(bool shallow = true) const;
 
 		char Play(const Player* other, size_t round, size_t left);
 

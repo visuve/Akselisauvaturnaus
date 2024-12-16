@@ -5,9 +5,21 @@ namespace Ast
 	Competition::Competition(Player* arthur, Player* bertha, size_t rounds) :
 		_rounds(rounds),
 		_arthur(arthur),
-		_bertha(bertha)
+		_bertha(bertha),
+		_clone(_arthur == _bertha)
 	{
-		assert(arthur != bertha);
+		if (_clone)
+		{
+			_bertha = _arthur->Clone();
+		}
+	}
+
+	Competition::~Competition()
+	{
+		if (_clone)
+		{
+			delete _bertha;
+		}
 	}
 
 	Competition::operator bool() const

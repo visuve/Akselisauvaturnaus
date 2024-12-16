@@ -20,13 +20,13 @@ namespace Ast
 		return count;
 	}
 
-	Player::Player(Ast::IStrategy* strategy, size_t rounds, size_t competitions) :
+	Player::Player(Ast::IStrategy* strategy, size_t rounds, size_t competitions, size_t competitionIndex) :
 		_strategy(strategy),
 		_rounds(rounds),
 		_history(new char*[competitions]),
 		_score(new size_t[competitions]),
 		_competitionCount(competitions),
-		_competitionIndex(0)
+		_competitionIndex(competitionIndex)
 	{
 		
 		for (size_t y = 0; y < _competitionCount; ++y)
@@ -65,9 +65,24 @@ namespace Ast
 		}
 	}
 
-	Player* Player::Clone(const Player* other)
+	Player* Player::Clone(bool shallow) const
 	{
-		return new Player(IStrategy::Clone(other->_strategy), other->_rounds, other->_competitionCount);
+		auto clone = new Player(_strategy->Clone(), _rounds, _competitionCount, _competitionIndex);
+
+		if (!shallow)
+		{
+			for (size_t y = 0; y < _competitionCount; ++y)
+			{
+				for (size_t x = 0; x < _rounds; ++x)
+				{
+					clone->_history[y][x] = _history[y][x];
+				}
+
+				clone->_score[y] = _score[y];
+			}
+		}
+
+		return clone;
 	}
 
 	char Player::Play(const Player* other, size_t round, size_t left)
