@@ -80,8 +80,8 @@ namespace Ast
 				}
 				else
 				{
-					const size_t i = y * _playerCount + x;
-					os << std::setw(ConsolePadding) << _players[x]->CompetitionScore(i);
+					const size_t tournament = y * _playerCount + x;
+					os << std::setw(ConsolePadding) << _players[x]->Result(tournament)->Score;
 				}
 			}
 
@@ -100,10 +100,10 @@ namespace Ast
 
 				os << arthur->Name() << " vs " << bertha->Name() << "\t->\t";
 
-				const size_t i = y * _playerCount + x;
+				const size_t tournament = y * _playerCount + x;
 
-				size_t arthurScore = arthur->CompetitionScore(i);
-				size_t berthaScore = bertha->CompetitionScore(i);
+				size_t arthurScore = arthur->Result(tournament)->Score;
+				size_t berthaScore = bertha->Result(tournament)->Score;
 
 				os << arthur->Name() << '=' << arthurScore << '\t';
 				os << bertha->Name() << '=' << berthaScore << "\t->\t";

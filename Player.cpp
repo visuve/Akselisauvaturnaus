@@ -24,6 +24,8 @@ namespace Ast
 
 	size_t Find(const char* where, char what)
 	{
+		assert(where);
+
 		const char* start = where;
 
 		while (where && *where)
@@ -44,24 +46,49 @@ namespace Ast
 		return Find(where, what) != std::numeric_limits<size_t>::max();
 	}
 
-	Player::Player(Ast::IStrategy* strategy, size_t rounds, size_t competitions, size_t competitionIndex) :
+	Player::Data::Data(size_t size) :
+		Score(0),
+		Choices(new char[++size])
+	{
+		while (size--)
+		{
+			Choices[size] = '\0';
+		}
+	}
+
+	Player::Data::~Data()
+	{
+		if (Choices)
+		{
+			delete[] Choices;
+		}
+	}
+
+	Player::Data* Player::Data::Clone(size_t size) const
+	{
+		auto clone = new Data();
+		clone->Choices = new char[++size];
+
+		while (size--)
+		{
+			clone->Choices[size] = Choices[size];
+		}
+
+		clone->Score = Score;
+
+		return clone;
+	}
+
+	Player::Player(IStrategy* strategy, size_t rounds, size_t competitions, size_t competitionIndex) :
 		_strategy(strategy),
 		_rounds(rounds),
-		_history(new char*[competitions]),
-		_score(new size_t[competitions]),
+		_data(new Data*[competitions]),
 		_competitionCount(competitions),
 		_competitionIndex(competitionIndex)
 	{
 		for (size_t y = 0; y < _competitionCount; ++y)
 		{
-			_history[y] = new char[rounds + 1];
-
-			for (size_t x = 0; x < rounds + 1; ++x)
-			{
-				_history[y][x] = '\0';
-			}
-
-			_score[y] = 0;
+			_data[y] = new Data(rounds);
 		}
 	}
 
@@ -72,19 +99,14 @@ namespace Ast
 			delete _strategy;
 		}
 
-		if (_history)
+		if (_data)
 		{
 			for (size_t y = 0; y < _competitionCount; ++y)
 			{
-				delete[] _history[y];
+				delete _data[y];
 			}
 
-			delete[] _history;
-		}
-
-		if (_score)
-		{
-			delete[] _score;
+			delete[] _data;
 		}
 	}
 
@@ -96,12 +118,7 @@ namespace Ast
 		{
 			for (size_t y = 0; y < _competitionCount; ++y)
 			{
-				for (size_t x = 0; x < _rounds; ++x)
-				{
-					clone->_history[y][x] = _history[y][x];
-				}
-
-				clone->_score[y] = _score[y];
+				clone->_data[y] = _data[y]->Clone(_rounds);
 			}
 		}
 
@@ -126,52 +143,51 @@ namespace Ast
 
 	const char* Player::History() const
 	{
-		return _history[_competitionIndex];
+		return _data[_competitionIndex]->Choices;
 	}
 
 	char Player::History(size_t i) const
 	{
-		assert(_history[_competitionIndex][i]);
-		return _history[_competitionIndex][i];
+		return _data[_competitionIndex]->Choices[i];
 	}
 
 	char& Player::History(size_t i)
 	{
-		return _history[_competitionIndex][i];
-	}
-
-	const char* Player::CompetitionHistory(size_t i) const
-	{
-		return _history[i];
-	}
-
-	size_t Player::Cooperations() const
-	{
-		return Count(_history[_competitionIndex], Cooperate);
-	}
-
-	size_t Player::Defections() const
-	{
-		return Count(_history[_competitionIndex], Defect);
+		return _data[_competitionIndex]->Choices[i];
 	}
 
 	size_t Player::Score() const
 	{
-		return _score[_competitionIndex];
+		return _data[_competitionIndex]->Score;
 	}
 
 	size_t& Player::Score()
 	{
-		return _score[_competitionIndex];
+		return _data[_competitionIndex]->Score;
 	}
 
-	size_t Player::CompetitionScore(size_t i) const
+	size_t Player::Cooperations() const
 	{
-		return _score[i];
+		return Count(_data[_competitionIndex]->Choices, Cooperate);
+	}
+
+	size_t Player::Defections() const
+	{
+		return Count(_data[_competitionIndex]->Choices, Defect);
+	}
+
+	bool Player::HasDefected() const
+	{
+		return Contains(_data[_competitionIndex]->Choices, Defect);
 	}
 
 	const char* Player::Name() const
 	{
 		return _strategy->Name();
+	}
+
+	Player::Data* Player::Result(size_t competition) const
+	{
+		return _data[competition];
 	}
 }

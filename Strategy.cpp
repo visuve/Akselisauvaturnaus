@@ -229,7 +229,7 @@ namespace Ast
 		
 		char Friedman::Apply(const Player* self, const Player* opponent, size_t round, size_t)
 		{
-			return opponent->Defections() ? Defect : Cooperate;
+			return opponent->HasDefected() ? Defect : Cooperate;
 		}
 
 		const char* Friedman::Name() const

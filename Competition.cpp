@@ -32,6 +32,8 @@ namespace Ast
 		char& arthursChoice = _arthur->History(_round);
 		char& berthasChoice = _bertha->History(_round);
 
+		assert(arthursChoice == '\0' && berthasChoice == '\0');
+
 		arthursChoice = _arthur->Play(_bertha, _round, _rounds - _round);
 		berthasChoice = _bertha->Play(_arthur, _round, _rounds - _round);
 
