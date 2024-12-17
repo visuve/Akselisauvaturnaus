@@ -176,11 +176,6 @@ namespace Ast
 		return Count(_data[_competitionIndex]->Choices, Defect);
 	}
 
-	bool Player::HasDefected() const
-	{
-		return Contains(_data[_competitionIndex]->Choices, Defect);
-	}
-
 	const char* Player::Name() const
 	{
 		return _strategy->Name();

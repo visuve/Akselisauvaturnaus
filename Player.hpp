@@ -38,7 +38,6 @@ namespace Ast
 
 		size_t Cooperations() const;
 		size_t Defections() const;
-		bool HasDefected() const;
 
 		const char* Name() const;
 		Data* Result(size_t competition) const;

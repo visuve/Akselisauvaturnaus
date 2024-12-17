@@ -60,6 +60,8 @@ namespace Ast
 			char Apply(const Player*, const Player*, size_t, size_t) override;
 			const char* Name() const override;
 			IStrategy* Clone() const override;
+
+			bool Angry = false;
 		};
 
 		struct Davis : Friedman
