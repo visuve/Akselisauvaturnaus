@@ -1,6 +1,5 @@
 #include "Tournament.hpp"
 
-
 namespace Ast
 {
 	Tournament::Tournament(Player** players, size_t playerCount, size_t rounds) :
@@ -14,8 +13,8 @@ namespace Ast
 		{
 			for (size_t x = 0; x < playerCount; ++x)
 			{
-				const size_t i = y * _playerCount + x;
-				_competitions[i] = new Competition(players[y], players[x], rounds);
+				const size_t competitionIdx = y * _playerCount + x;
+				_competitions[competitionIdx] = new Competition(players[y], players[x], rounds);
 			}
 		}
 	}
@@ -80,8 +79,8 @@ namespace Ast
 				}
 				else
 				{
-					const size_t tournament = y * _playerCount + x;
-					os << std::setw(ConsolePadding) << _players[x]->Result(tournament)->Score;
+					const size_t competitionIdx = y * _playerCount + x;
+					os << std::setw(ConsolePadding) << _players[x]->Result(competitionIdx)->Score;
 				}
 			}
 
@@ -100,10 +99,10 @@ namespace Ast
 
 				os << arthur->Name() << " vs " << bertha->Name() << "\t->\t";
 
-				const size_t tournament = y * _playerCount + x;
+				const size_t competitionIdx = y * _playerCount + x;
 
-				size_t arthurScore = arthur->Result(tournament)->Score;
-				size_t berthaScore = bertha->Result(tournament)->Score;
+				size_t arthurScore = arthur->Result(competitionIdx)->Score;
+				size_t berthaScore = bertha->Result(competitionIdx)->Score;
 
 				os << arthur->Name() << '=' << arthurScore << '\t';
 				os << bertha->Name() << '=' << berthaScore << "\t->\t";
