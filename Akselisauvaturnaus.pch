@@ -13,3 +13,9 @@ namespace Ast
 	constexpr char Defect = 'D';
 	constexpr size_t ConsolePadding = 18;
 }
+
+#define NonCopyable(T) \
+	T(const T &) = delete; \
+	T(T&&) = delete; \
+	T& operator = (const T &) = delete; \
+	T& operator = (T&&) = delete

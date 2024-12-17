@@ -14,6 +14,8 @@ namespace Ast
 			Data() = default;
 			Data(size_t);
 			~Data();
+			NonCopyable(Data);
+
 			Data* Clone(size_t) const;
 
 			size_t Score = 0;
@@ -22,6 +24,8 @@ namespace Ast
 
 		Player(IStrategy*, size_t rounds, size_t competitions = 1, size_t competitionIndex = 0);
 		virtual ~Player();
+		NonCopyable(Player);
+
 		Player* Clone(bool shallow = true) const;
 
 		char Play(const Player* other, size_t round, size_t left);

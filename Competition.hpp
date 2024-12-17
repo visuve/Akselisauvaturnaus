@@ -9,6 +9,7 @@ namespace Ast
 	public:
 		Competition(Player*, Player*, size_t rounds);
 		~Competition();
+		NonCopyable(Competition);
 
 		operator bool() const;
 		Competition& operator++ ();

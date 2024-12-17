@@ -3,7 +3,7 @@
 
 namespace Ast
 {
-	float Mean(const char samples[], size_t size)
+	constexpr float Mean(const char samples[], size_t size)
 	{
 		return std::accumulate(samples, samples + size, 0.0f,
 			[](float accumulator, char c)
@@ -12,7 +12,7 @@ namespace Ast
 		}) / size;
 	}
 
-	float Variance(const char samples[], size_t size, float mean)
+	constexpr float Variance(const char samples[], size_t size, float mean)
 	{
 		return std::accumulate(samples, samples + size, 0.0f,
 			[mean, size](float accumulator, char c)
@@ -28,7 +28,7 @@ namespace Ast
 		return std::sqrtf(variance);
 	};
 
-	float SquareSum(const char samples[], size_t size, float mean)
+	constexpr float SquareSum(const char samples[], size_t size, float mean)
 	{
 		return std::accumulate(samples, samples + size, 0.0f,
 			[mean](float accumulator, char c)
@@ -37,7 +37,7 @@ namespace Ast
 		});
 	}
 
-	float ChiSquare(const char samples[], size_t size)
+	constexpr float ChiSquare(const char samples[], size_t size)
 	{
 		const float mean = Mean(samples, size);
 		const float squareSum = SquareSum(samples, size, mean);

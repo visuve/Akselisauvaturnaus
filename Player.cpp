@@ -1,9 +1,8 @@
 #include "Player.hpp"
-#include "Strategy.hpp"
 
 namespace Ast
 {
-	size_t Count(const char* where, char what)
+	constexpr size_t Count(const char where[], char what)
 	{
 		assert(where);
 
@@ -22,7 +21,7 @@ namespace Ast
 		return count;
 	}
 
-	size_t Find(const char* where, char what)
+	constexpr size_t Find(const char where[], char what)
 	{
 		assert(where);
 
@@ -41,7 +40,7 @@ namespace Ast
 		return std::numeric_limits<size_t>::max();
 	}
 
-	bool Contains(const char* where, char what)
+	constexpr bool Contains(const char where[], char what)
 	{
 		return Find(where, what) != std::numeric_limits<size_t>::max();
 	}
