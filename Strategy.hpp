@@ -180,6 +180,4 @@ namespace Ast
 			IStrategy* Clone() const override;
 		};
 	}
-
-	std::ostream& operator << (std::ostream&, const IStrategy&);
 }

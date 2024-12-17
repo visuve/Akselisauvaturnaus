@@ -61,9 +61,4 @@ namespace Ast
 		++_round;
 		return *this;
 	}
-
-	std::ostream& operator << (std::ostream& os, const Competition& game)
-	{
-		return os << *game._arthur << '\n' << *game._bertha;
-	}
 }

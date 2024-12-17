@@ -13,4 +13,5 @@ namespace Ast
 {
 	constexpr char Cooperate = 'C';
 	constexpr char Defect = 'D';
+	constexpr size_t ConsolePadding = 18;
 }

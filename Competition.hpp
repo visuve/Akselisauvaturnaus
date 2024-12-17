@@ -13,8 +13,6 @@ namespace Ast
 		operator bool() const;
 		Competition& operator++ ();
 
-		friend std::ostream& operator << (std::ostream&, const Competition&);
-
 	private:
 		const size_t _rounds = 0;
 		size_t _round = 0;

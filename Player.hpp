@@ -21,14 +21,16 @@ namespace Ast
 		const char* History() const;
 		char History(size_t i) const;
 		char& History(size_t i);
+		const char* CompetitionHistory(size_t i) const;
 
 		size_t Cooperations() const;
 		size_t Defections() const;
 
 		size_t Score() const;
 		size_t& Score();
+		size_t CompetitionScore(size_t i) const;
 
-		friend std::ostream& operator << (std::ostream&, const Player&);
+		const char* Name() const;
 
 	private:
 		IStrategy* _strategy;
@@ -39,6 +41,4 @@ namespace Ast
 		const size_t _competitionCount = 0;
 		size_t _competitionIndex = 0;
 	};
-
-	std::ostream& operator << (std::ostream&, const Player&);
 };

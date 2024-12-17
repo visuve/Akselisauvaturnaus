@@ -645,9 +645,4 @@ namespace Ast
 			return new Grumpy(*this);
 		}
 	}
-
-	std::ostream& operator << (std::ostream& os, const IStrategy& strategy)
-	{
-		return os << strategy.Name();
-	}
 }

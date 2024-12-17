@@ -5,6 +5,8 @@ namespace Ast
 {
 	size_t Count(const char* where, char what)
 	{
+		assert(where);
+
 		size_t count = 0;
 
 		while (where && *where)
@@ -20,6 +22,28 @@ namespace Ast
 		return count;
 	}
 
+	size_t Find(const char* where, char what)
+	{
+		const char* start = where;
+
+		while (where && *where)
+		{
+			if (*where == what)
+			{
+				return where - start;
+			}
+
+			++where;
+		}
+
+		return std::numeric_limits<size_t>::max();
+	}
+
+	bool Contains(const char* where, char what)
+	{
+		return Find(where, what) != std::numeric_limits<size_t>::max();
+	}
+
 	Player::Player(Ast::IStrategy* strategy, size_t rounds, size_t competitions, size_t competitionIndex) :
 		_strategy(strategy),
 		_rounds(rounds),
@@ -28,7 +52,6 @@ namespace Ast
 		_competitionCount(competitions),
 		_competitionIndex(competitionIndex)
 	{
-		
 		for (size_t y = 0; y < _competitionCount; ++y)
 		{
 			_history[y] = new char[rounds + 1];
@@ -117,6 +140,11 @@ namespace Ast
 		return _history[_competitionIndex][i];
 	}
 
+	const char* Player::CompetitionHistory(size_t i) const
+	{
+		return _history[i];
+	}
+
 	size_t Player::Cooperations() const
 	{
 		return Count(_history[_competitionIndex], Cooperate);
@@ -137,9 +165,13 @@ namespace Ast
 		return _score[_competitionIndex];
 	}
 
-	std::ostream& operator << (std::ostream& os, const Player& player)
+	size_t Player::CompetitionScore(size_t i) const
 	{
-		return os << *player._strategy << ": " <<
-			player.History() << "\t-> Score:" << player.Score();
+		return _score[i];
+	}
+
+	const char* Player::Name() const
+	{
+		return _strategy->Name();
 	}
 }
